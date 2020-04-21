@@ -42,6 +42,16 @@ var galleryPage = new Vue({
          }
       },
 
+      displayPicture(folderIndex, pictureIndex) {
+         this.folderIndex = folderIndex;
+         this.pictureIndex = pictureIndex;
+
+         this.folderPath = this.pictures[this.folderIndex].folderPath + '/';
+         this.pictureNewPath = this.folderPath;
+         this.pictureName = this.pictures[this.folderIndex].pics[this.pictureIndex].pictureName;
+         this.pictureNewName = this.pictureName;
+      },
+
       renamePicture() {
          
          if (this.pictureNewName.lastIndexOf(".") == -1) {
@@ -159,7 +169,17 @@ var galleryPage = new Vue({
          this.pictureNewPath = this.folderPath;
          this.pictureName = this.pictures[this.folderIndex].pics[this.pictureIndex].pictureName;
          this.pictureNewName = this.pictureName;
-      }
+      },
+
+      expandFolder(index) {
+         $('#folder' + index).is(":visible") ? $('#folder' + index).hide() : $('#folder' + index).show();
+
+         for (var i = 0; i < Object.keys(this.pictures).length; i++) {
+            if (i != index) {
+               $('#folder' + i).hide();
+            }
+         }
+      },
    }
 })
 

@@ -84,7 +84,7 @@
 					<p style="padding: 10px 0 10px 20px; background-color:#EBEBEB; margin:0">GALLERY</p>
 					<div style="background-color: #FFDFC7; overflow-y: scroll; max-height: 53%">
 						<div v-for="(picture, index) in pictures" class="folder">
-							<div class="collapsible">
+							<div class="collapsible" v-on:click="expandFolder(index)">
 								<span style="padding: 5px; font-size: 12px">
 									{{picture.folderPath}}
 								</span>
@@ -93,10 +93,10 @@
 								</span>
 							</div>
 
-							<div :id="'folder' + index"style="max-height: 160px; overflow-y: scroll" class="content">
+							<div :id="'folder' + index" v-bind:class="{ 'expandFolder' : index == this.galleryPage.folderIndex}" style="max-height: 160px; overflow-y: scroll" class="content">
 								<div class="row">
 									<div v-for="(pic, pictureIndex) in picture.pics" class="col-xs-6 col-md-6" style="padding:10px 5px">
-										<img class="col-sm-12 img-responsive" v-bind:src="folderPrefix + '/' +  picture.folderPath + '/' + pic.pictureName" style="padding:0; width: auto; max-height:90px; border-radius: 15px; display:inline-block" alt="something">
+										<img v-bind:class="{ 'selectedPicture' : (index == this.galleryPage.folderIndex && pictureIndex == this.galleryPage.pictureIndex)}" v-on:click="displayPicture(index, pictureIndex)" class="col-sm-12 img-responsive" v-bind:src="folderPrefix + '/' +  picture.folderPath + '/' + pic.pictureName" style="padding:0; width: auto; max-height:90px; border-radius: 15px; display:inline-block" alt="something">
 									</div>
 								</div>
 							</div>
