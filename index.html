@@ -1,0 +1,29 @@
+<!DOCTYPE html lang="en">
+   <head>
+		<meta charset = "UTF-8">
+		<title>Gallery Manager</title>
+		<link rel = "stylesheet" href = "./bower_components/bootstrap/dist/css/bootstrap.min.css" />
+
+		<link rel="stylesheet" type="text/css" href="style.css">
+
+		<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+   </head>
+   
+   <body>
+		<div id="folder-select-page" class = "container">
+			<div class="row h-100">
+				<div class="col-sm-12 my-auto">
+					<div class="input-group mb-3" style="padding-left: 20%; padding-right:20%">
+						<input id="folder-select-input" type="text" class="form-control" placeholder="Folder's Path" aria-label="Recipient's username" aria-describedby="basic-addon2" autofocus>
+						<div id="select-folder-button" class="input-group-append">
+							<label class="file-select">
+								<span class="input-group-text" id="folder-select-button">Select Folder</span>
+							</label>
+						</div>
+					</div>
+				</div>
+			</div>
+			<input id = "folder-select" style="display: none" type="file" webkitdirectory directory multiple/>
+		</div>
+	</body>
+</html>

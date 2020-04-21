@@ -1,0 +1,18 @@
+body {
+    text-align: center;
+}
+
+div[data-placeholder]:not([data-placeholder=""]):empty::before {
+    content: attr(data-placeholder);
+}
+
+#folder-select-input {
+    border-top-left-radius: 45px;
+    border-bottom-left-radius: 45px;
+}
+
+#folder-select-button {
+    border-top-right-radius: 45px;
+    border-bottom-right-radius: 45px;
+    cursor: pointer;
+}
