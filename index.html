@@ -40,7 +40,7 @@
 								<input v-model="pictureNewPath" :value="pictureNewPath" style="font-size: 10px; padding:5px; cursor:default" type="text" class="form-control" placeholder="Folder's Path" aria-label="Folder's Path" aria-describedby="basic-addon2">
 							</div>
 							<div class="clearfix col-xs-3" style="float:right; padding:0" title="Padding">
-								<button type="button" class="btn" style="font-size:8px; border:1px solid #C4C4C4; padding:7px 10px; cursor:default">Move</button>
+								<button  type="button" class="btn" style="font-size:8px; border:1px solid #C4C4C4; padding:7px 10px; cursor:default">Move</button>
 							</div>
 						</div>
 					</div>
@@ -65,10 +65,10 @@
 					<div class="clearfix" style="padding:10px 10px 0 10px">
 						<div style="font-size: 8px">
 							<div class="clearfix col-xs-3" style="float:left; padding:0" title="Padding">
-								<button type="button" class="btn" style="font-size:8px; border:1px solid #C4C4C4; padding:7px 10px; cursor:default"><img style="height:8px; padding-right:5px" src="./left_arrow.svg" alt="something"> Prev Picture</button>
+								<button :disabled="pictureIndex == 0" v-on:click="previousPicture()"  type="button" class="btn" style="font-size:8px; border:1px solid #C4C4C4; padding:7px 10px; cursor:default"><img style="height:8px; padding-right:5px" src="./left_arrow.svg" alt="something"> Prev Picture</button>
 							</div>
 							<div class="clearfix col-xs-3" style="float:right; padding:0" title="Padding">
-								<button type="button" class="btn" style="font-size:8px; border:1px solid #C4C4C4; padding:7px 10px; cursor:default">Next Picture <img style="height:8px; padding-left:5px" src="./right_arrow.svg" alt="something"></button>
+								<button :disabled="pictureIndex == pictures[folderIndex].pics.length - 1" v-on:click="nextPicture()" type="button" class="btn" style="font-size:8px; border:1px solid #C4C4C4; padding:7px 10px; cursor:default">Next Picture <img style="height:8px; padding-left:5px" src="./right_arrow.svg" alt="something"></button>
 							</div>
 						</div>
 					</div>

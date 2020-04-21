@@ -19,7 +19,25 @@ var galleryPage = new Vue({
       window.addEventListener('keydown', this.onkey);
    },
 
-   
+   methods: {
+      nextPicture() {
+         if (this.pictureIndex < this.pictures[this.folderIndex].pics.length - 1) {
+            this.folderPath = this.pictures[this.folderIndex].folderPath + "/";
+            this.pictureNewPath = this.folderPath;
+            this.pictureName = this.pictures[this.folderIndex].pics[++this.pictureIndex].pictureName;
+            this.pictureNewName = this.pictureName;
+         }
+      },
+
+      previousPicture() {
+         if (this.pictureIndex > 0) {
+            this.folderPath = this.pictures[this.folderIndex].folderPath + "/";
+            this.pictureNewPath = this.folderPath;
+            this.pictureName = this.pictures[this.folderIndex].pics[--this.pictureIndex].pictureName;
+            this.pictureNewName = this.pictureName;
+         }
+      }
+   }
 })
 
 $( document ).ready(function() {
