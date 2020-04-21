@@ -25,5 +25,17 @@
 			</div>
 			<input id = "folder-select" style="display: none" type="file" webkitdirectory directory multiple/>
 		</div>
+
+		<div id = "galleryPage" >
+			<div v-if="pictureName != null" style="display: flex; height:100%">
+			<div class="col-sm-10" style="padding:20px">
+				<img class="col-sm-12 img-responsive" alt="something" v-bind:src="folderPrefix + '/' + folderPath + pictureName" style="max-height: 600px; border-radius: 25px">
+			</div>
+			
+			</div>
+		</div>
+
+		
+		<script src = "./view.js" ></script>
 	</body>
 </html>
