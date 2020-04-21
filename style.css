@@ -16,3 +16,56 @@ div[data-placeholder]:not([data-placeholder=""]):empty::before {
     border-bottom-right-radius: 45px;
     cursor: pointer;
 }
+
+html, body {
+    height: 100%;
+}
+
+.container {
+    height: 100%;
+}
+
+html, body {margin: 0; height: 100%; overflow: hidden}
+
+.content {
+  padding: 0 18px;
+  display: none;
+  overflow: hidden;
+  background-color: #f1f1f1;
+}
+
+html {
+    overflow: scroll;
+    overflow-x: hidden;
+}
+::-webkit-scrollbar {
+    width: 0px;  /* Remove scrollbar space */
+    background: transparent;  /* Optional: just make scrollbar invisible */
+}
+
+.collapsible {
+    padding: 5px;
+}
+
+.folder:nth-child(odd) .collapsible {
+    background-color: #FFDFC7 !important;
+}
+
+.folder:nth-child(even) .collapsible {
+    background-color: #FFBA85 !important;
+}
+
+.btn:hover, input:hover {
+    background-color: #FFBA85;
+}
+
+body, img {
+    cursor: default;
+    -webkit-user-drag: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
