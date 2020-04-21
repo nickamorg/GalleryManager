@@ -143,6 +143,22 @@ var galleryPage = new Vue({
             this.pictureNewPath = this.lastMovementPath;
             this.movePicture();
          }
+      },
+
+      deletePicture() {
+         fs.unlinkSync(this.folderPrefix + "/" + this.folderPath + "/" + this.pictureName);
+
+         if (this.pictureIndex == this.pictures[this.folderIndex].pics.length - 1) {
+            this.$delete(this.pictures[this.folderIndex].pics, this.pictureIndex);
+            this.pictureIndex--;
+         } else {
+            this.$delete(this.pictures[this.folderIndex].pics, this.pictureIndex);
+         }
+
+         this.folderPath = this.pictures[this.folderIndex].folderPath + "/";
+         this.pictureNewPath = this.folderPath;
+         this.pictureName = this.pictures[this.folderIndex].pics[this.pictureIndex].pictureName;
+         this.pictureNewName = this.pictureName;
       }
    }
 })
