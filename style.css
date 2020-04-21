@@ -55,6 +55,30 @@ html {
     background-color: #FFBA85 !important;
 }
 
+/* snackbar */
+#snackbar {
+    visibility: hidden;
+    min-width: 350px;
+    max-width: 400px;
+    margin-left: -125px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 2px;
+    padding: 10px;
+    position: fixed;
+    z-index: 1;
+    left: 40%;
+    bottom: 30px;
+    border-radius: 25px;
+}
+  
+#snackbar.show {
+    visibility: visible;
+    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
 .btn:hover, input:hover {
     background-color: #FFBA85;
 }
@@ -68,4 +92,12 @@ body, img {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
+
+.selectedPicture {
+    border: 3px solid #FFBA85;
+}
+
+.expandFolder {
+    display: block !important;
 }

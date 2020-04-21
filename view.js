@@ -186,7 +186,6 @@ var galleryPage = new Vue({
          // If the folder path exists, find the right index of Vue data
          if (!newFolder) {
             for (depth in this.pictures) {
-               console.log(this.pictures[depth].folderPath + "    " + this.pictureNewPath);
                if (this.pictures[depth].folderPath == this.pictureNewPath) {
                   break;
                }
@@ -211,7 +210,6 @@ var galleryPage = new Vue({
          this.lastMovementPath = this.pictureNewPath;
          if (this.lastMovementPath.slice(-1) != '/') this.lastMovementPath += '/';
          
-         console.log("Last movement path: " + this.lastMovementPath);
          snackbar.expandSnackbar(3, "Image Moved to '" + this.pictureNewPath + "' Successfully");
 
          if (this.pictureIndex == this.pictures[this.folderIndex].pics.length - 1) {
