@@ -19,6 +19,10 @@ var galleryPage = new Vue({
       window.addEventListener('keydown', this.onkey);
    },
 
+   watch: {
+      'pictureNewPath': function(val) { }
+   },
+
    methods: {
       nextPicture() {
          if (this.pictureIndex < this.pictures[this.folderIndex].pics.length - 1) {
@@ -35,6 +39,87 @@ var galleryPage = new Vue({
             this.pictureNewPath = this.folderPath;
             this.pictureName = this.pictures[this.folderIndex].pics[--this.pictureIndex].pictureName;
             this.pictureNewName = this.pictureName;
+         }
+      },
+
+      movePicture() {
+         if (this.pictureNewPath == this.folderPath) return;
+
+         this.pictureNewPath = this.pictureNewPath.split("\\").join("/");
+
+         if (!this.pictureNewPath.startsWith(this.folderHome)) {
+            this.pictureNewPath = this.folderHome + "/" + this.pictureNewPath;
+         }
+
+         var folders = this.pictureNewPath.split("/");
+
+         var currentFolderPath = "";
+         var depth = -1;
+         var newFolder = false;
+
+         // Create folder path if not exists
+         for (var index in folders) {
+            currentFolderPath += folders[index] + "/";
+            if (!fs.existsSync(this.folderPrefix + "/" + currentFolderPath)) {
+               fs.mkdirSync(this.folderPrefix + "/" + currentFolderPath);
+
+               depth = Object.keys(this.pictures).length;
+               Vue.set(this.pictures, depth, {
+                  "folderPath" : currentFolderPath,
+                  "pics" : []
+               });
+               newFolder = true;
+            }
+         }
+
+         // If the folder path exists, find the right index of Vue data
+         if (!newFolder) {
+            for (depth in this.pictures) {
+               console.log(this.pictures[depth].folderPath + "    " + this.pictureNewPath);
+               if (this.pictures[depth].folderPath == this.pictureNewPath) {
+                  break;
+               }
+            }
+         }
+         
+         var fromFile = this.folderPrefix + "/" + this.folderPath + this.pictureName;
+         var toFile = this.folderPrefix + "/" + currentFolderPath + "/" + this.pictureName;
+         
+         fs.renameSync(fromFile, toFile);
+         
+         if (newFolder) {
+            Vue.set(this.pictures[depth], "folderPath", currentFolderPath.substring(0, currentFolderPath.length - 1));
+            Vue.set(this.pictures[depth].pics, 0, []);
+            Vue.set(this.pictures[depth].pics[0], "pictureName", this.pictureName);
+         } else {
+            var nextIndex  = this.pictures[depth].pics.length;
+            Vue.set(this.pictures[depth].pics, nextIndex, []);
+            Vue.set(this.pictures[depth].pics[nextIndex], "pictureName", this.pictureName);
+         }
+
+         this.lastMovementPath = this.pictureNewPath;
+         if (this.lastMovementPath.slice(-1) != '/') this.lastMovementPath += '/';
+         
+         if (this.pictureIndex == this.pictures[this.folderIndex].pics.length - 1) {
+            this.$delete(this.pictures[this.folderIndex].pics, this.pictureIndex);
+            this.pictureIndex--;
+         } else {
+            this.$delete(this.pictures[this.folderIndex].pics, this.pictureIndex);
+         }
+
+         this.folderPath = this.pictures[this.folderIndex].folderPath + "/";
+         this.pictureNewPath = this.folderPath;
+         this.pictureName = this.pictures[this.folderIndex].pics[this.pictureIndex].pictureName;
+         this.pictureNewName = this.pictureName;
+      },
+
+      movePictureToLastPath() {
+         if (this.lastMovementPath != null && this.lastMovementPath != this.folderPath) {
+            if (this.lastMovementPath.slice(-1) == '/' || this.lastMovementPath.slice(-1) == '\\') { 
+               this.lastMovementPath = this.lastMovementPath.slice(0, -1);
+            }
+            this.pictureNewPath = this.lastMovementPath;
+            this.movePicture();
          }
       }
    }
