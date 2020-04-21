@@ -86,7 +86,7 @@
 						<div v-for="(picture, index) in pictures" class="folder">
 							<div class="collapsible" v-on:click="expandFolder(index)">
 								<span style="padding: 5px; font-size: 12px">
-									{{picture.folderPath}}
+									{{trimFolderPath(picture.folderPath)}}
 								</span>
 								<span style="float:right;">
 									<img style="height:15px; padding-right:5px" src="./arrow_down.svg" alt="something" />
@@ -107,6 +107,8 @@
 			</div>
 		</div>
 
+		<!-- Event's displayed message -->
+        <div id="snackbar">Some text some message..</div>
 		<script src = "./view.js" ></script>
 	</body>
 </html>

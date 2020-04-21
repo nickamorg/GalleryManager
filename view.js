@@ -1,5 +1,18 @@
 let $ = require('jquery')
 let fs = require('fs')
+
+var snackbar = new Vue({
+   el: '#snackbar',
+   methods: {
+       expandSnackbar(time, text) {
+           var elem = document.getElementById("snackbar");
+           elem.innerHTML = text;
+           elem.className = "show";
+           setTimeout(function(){ elem.className = elem.className.replace("show", ""); }, time * 1000);
+       }
+   }
+});
+
 var galleryPage = new Vue({
    el: '#galleryPage',
    data: {
@@ -20,10 +33,47 @@ var galleryPage = new Vue({
    },
 
    watch: {
+      'pictureNewName': function(val) { },
+
       'pictureNewPath': function(val) { }
    },
 
    methods: {
+      onkey(event) {         
+         if ($("input").is(":focus")) return;
+
+         switch(event.which) {
+            case 37: // left
+               this.previousPicture();
+               break;
+            case 38: // up
+               this.previousPicture();
+               this.previousPicture();
+               break;
+            case 39: // right
+               this.nextPicture();
+               break;
+            case 40: // down
+               this.nextPicture();
+               this.nextPicture();
+               break;
+            case 46: // Delete
+            case 68: // D - Delete
+               this.deletePicture();
+               break;
+            case 76: // L - Move to last folder
+            this.movePictureToLastPath();
+               break;
+            case 77: // M - Move
+               this.movePicture();
+               break;
+            case 82: // R - Rename
+               this.renamePicture();
+               break;
+            default: return;
+         }
+      },
+
       nextPicture() {
          if (this.pictureIndex < this.pictures[this.folderIndex].pics.length - 1) {
             this.folderPath = this.pictures[this.folderIndex].folderPath + "/";
@@ -72,6 +122,7 @@ var galleryPage = new Vue({
             if ( err ) console.log('ERROR: ' + err);
          });
 
+         snackbar.expandSnackbar(3, "Image Renamed Successfully");
       },
 
       movePicture() {
@@ -132,6 +183,8 @@ var galleryPage = new Vue({
          this.lastMovementPath = this.pictureNewPath;
          if (this.lastMovementPath.slice(-1) != '/') this.lastMovementPath += '/';
          
+         snackbar.expandSnackbar(3, "Image Moved to '" + this.pictureNewPath + "' Successfully");
+         
          if (this.pictureIndex == this.pictures[this.folderIndex].pics.length - 1) {
             this.$delete(this.pictures[this.folderIndex].pics, this.pictureIndex);
             this.pictureIndex--;
@@ -169,6 +222,8 @@ var galleryPage = new Vue({
          this.pictureNewPath = this.folderPath;
          this.pictureName = this.pictures[this.folderIndex].pics[this.pictureIndex].pictureName;
          this.pictureNewName = this.pictureName;
+
+         snackbar.expandSnackbar(3, "Image Deleted Successfully");
       },
 
       expandFolder(index) {
@@ -180,6 +235,7 @@ var galleryPage = new Vue({
             }
          }
       },
+
    }
 })
 
