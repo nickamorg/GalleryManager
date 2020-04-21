@@ -42,6 +42,28 @@ var galleryPage = new Vue({
          }
       },
 
+      renamePicture() {
+         
+         if (this.pictureNewName.lastIndexOf(".") == -1) {
+            this.pictureNewName = this.pictureNewName + this.pictureName.substring(this.pictureName.lastIndexOf("."));
+         } else if (this.pictureNewName.charAt(this.pictureNewName.length - 1) == '.') {
+            this.pictureNewName += this.pictureName.substring(this.pictureName.lastIndexOf(".") + 1);
+         } else if (this.pictureNewName.substring(this.pictureNewName.lastIndexOf(".")) != this.pictureName.substring(this.pictureName.lastIndexOf("."))) {
+            this.pictureNewName = this.pictureNewName + this.pictureName.substring(this.pictureName.lastIndexOf("."));
+         }
+
+         var from = this.folderPrefix + "/" + this.folderPath + "/" + this.pictureName; 
+         var to = this.folderPrefix + "/" + this.folderPath + "/" + this.pictureNewName; 
+
+         this.pictureName = this.pictureNewName;
+         this.pictures[this.folderIndex].pics[this.pictureIndex].pictureName = this.pictureNewName;
+
+         fs.rename(from, to, function(err) {
+            if ( err ) console.log('ERROR: ' + err);
+         });
+
+      },
+
       movePicture() {
          if (this.pictureNewPath == this.folderPath) return;
 

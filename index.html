@@ -57,7 +57,7 @@
 								<input id="pictureName" v-model="pictureNewName" :value="pictureNewName" style="font-size: 10px; padding:5px; cursor:default" type="text" class="form-control" placeholder="Picture's Name" aria-label="Picture's Name" aria-describedby="basic-addon2">
 							</div>
 							<div class="clearfix col-xs-3" style="float:right; padding:0" title="Padding">
-								<button type="button" class="btn" style="font-size:8px; border:1px solid #C4C4C4; padding:7px 10px; cursor:default">Rename</button>
+								<button :disabled="pictureName == pictureNewName" v-on:click="renamePicture()" type="button" class="btn" style="font-size:8px; border:1px solid #C4C4C4; padding:7px 10px; cursor:default">Rename</button>
 							</div>
 						</div>
 					</div>
