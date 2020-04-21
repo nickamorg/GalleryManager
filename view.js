@@ -1,6 +1,31 @@
 let $ = require('jquery')
 let fs = require('fs')
 
+var INVALID_FILE_CHARS_REGEX = '^[^\\\\*/:"?|<>]*$';
+var INVALID_FOLDER_CHARS_REGEX = '^[^*:"?|<>]*$';
+
+function isValidFileName(fileName) {
+   if(!fileName.match(INVALID_CHARS_REGEX)) {
+      snackbar.expandSnackbar(3, "<span style='color:red'>A file name can't contain any of the following characters \ / : * ? \" < > |</span>");
+      return false;
+   }
+
+   return true;
+}
+
+function isValidFolderName(fileName) {
+   if(!fileName.match(INVALID_FOLDER_CHARS_REGEX)) {
+      snackbar.expandSnackbar(3, "<span style='color:red'>A folder path can't contain any of the following characters : * ? \" < > |</span>");
+      return false;
+   }
+
+   return true;
+}
+
+function trimMultipleSlashes(str) {
+   return str.replace(/\/+/g, '/');
+}
+
 var snackbar = new Vue({
    el: '#snackbar',
    methods: {
@@ -103,6 +128,7 @@ var galleryPage = new Vue({
       },
 
       renamePicture() {
+         if(!isValidFileName(this.pictureNewName)) return;
          
          if (this.pictureNewName.lastIndexOf(".") == -1) {
             this.pictureNewName = this.pictureNewName + this.pictureName.substring(this.pictureName.lastIndexOf("."));
@@ -127,8 +153,10 @@ var galleryPage = new Vue({
 
       movePicture() {
          if (this.pictureNewPath == this.folderPath) return;
+         if(!isValidFolderName(this.pictureNewPath)) return;
 
          this.pictureNewPath = this.pictureNewPath.split("\\").join("/");
+         this.pictureNewPath = trimMultipleSlashes(this.pictureNewPath);
 
          if (!this.pictureNewPath.startsWith(this.folderHome)) {
             this.pictureNewPath = this.folderHome + "/" + this.pictureNewPath;
@@ -183,8 +211,9 @@ var galleryPage = new Vue({
          this.lastMovementPath = this.pictureNewPath;
          if (this.lastMovementPath.slice(-1) != '/') this.lastMovementPath += '/';
          
+         console.log("Last movement path: " + this.lastMovementPath);
          snackbar.expandSnackbar(3, "Image Moved to '" + this.pictureNewPath + "' Successfully");
-         
+
          if (this.pictureIndex == this.pictures[this.folderIndex].pics.length - 1) {
             this.$delete(this.pictures[this.folderIndex].pics, this.pictureIndex);
             this.pictureIndex--;
@@ -236,6 +265,21 @@ var galleryPage = new Vue({
          }
       },
 
+      trimFolderPath(path) {
+         return path;
+         // path = path.split("/").join(" - ");
+
+         // console.log("path " + path);
+         // if (path.split(" - ").length == 1) {
+         //    return path;
+         // } else if (path.split(" - ").length == 2) {
+         //    return path;
+         // }  else if (path.split(" - ").length == 3) {
+         //    return path;
+         // } else {
+         //    return path.split(" - ")[0] + " - ... - " + path.split(" - ")[path.split(" - ").length - 1];
+         // }
+      }
    }
 })
 
