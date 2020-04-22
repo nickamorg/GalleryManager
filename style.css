@@ -101,3 +101,14 @@ body, img {
 .expandFolder {
     display: block !important;
 }
+
+button {
+    border: 1px solid #C4C4C4 !important;
+}
+
+.category {
+    font-size: 10px;
+    padding: 5px 0 5px 10px;
+    background-color:#EBEBEB;
+    margin:0;
+}

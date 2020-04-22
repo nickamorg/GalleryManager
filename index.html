@@ -1,14 +1,14 @@
 <!DOCTYPE html lang="en">
    <head>
-		<meta charset = "UTF-8">
+		<meta charset="UTF-8">
 		<title>Gallery Manager</title>
-		<link rel = "stylesheet" href = "./bower_components/bootstrap/dist/css/bootstrap.min.css" />
+		<link rel="stylesheet" href="./bower_components/bootstrap/dist/css/bootstrap.min.css" />
 		<link rel="stylesheet" type="text/css" href="style.css">
 		<script src="https://cdn.jsdelivr.net/npm/vue"></script>
    </head>
    
    <body>
-		<div id="folder-select-page" class = "container">
+		<div id="folder-select-page" class="container">
 			<div class="row h-100">
 				<div class="col-sm-12 my-auto">
 					<div class="input-group mb-3" style="padding-left: 20%; padding-right:20%">
@@ -19,91 +19,91 @@
 					</div>
 				</div>
 			</div>
-			<input id = "folder-select" style="display: none" type="file" webkitdirectory directory multiple/>
+			<input id="folder-select" style="display:none" type="file" webkitdirectory directory multiple/>
 		</div>
 
 		<div id="galleryPage">
 			<div v-if="pictureName != null" style="display: flex; height:100%">
 				<div class="col-sm-10" style="padding:20px">
-					<img class="col-sm-12 img-responsive" alt="something" v-bind:src="folderPrefix + folderHome + folderPath + pictureName + pictureFormat" style="max-height: 600px; border-radius: 25px">
+					<img class="col-sm-12 img-responsive" alt="Displayed Picture" v-bind:src="folderPrefix + folderHome + folderPath + pictureName + pictureFormat" style="max-height:600px; border-radius:20px">
 				</div>
-				<div class="col-sm-2" style="text-align:left; padding:0; background-color:#F5F5F5; border-left: 2px solid #000000;">
+				<div class="col-sm-2" style="text-align:left; padding:0; background-color:#F5F5F5; border-left: 2px solid #000000">
 					<div>
-						<p style="padding: 10px 0 10px 20px; background-color:#EBEBEB; margin:0">ACTIONS</p>
+						<p class="category">ACTIONS</p>
 						<div class="clearfix" style="padding:10px 10px 0 10px">
 							<div class="input-group">
 								<div class="input-group-prepend">
-									<span style="font-size:8px; padding:0 5px" class="input-group-text" id="basic-addon1">{{folderHome}}</span>
+									<span style="font-size:8px; padding:0 5px" class="input-group-text">{{folderHome}}</span>
 								</div>
 								
-								<input v-model="pictureNewPath" :value="pictureNewPath" style="font-size: 10px; padding:5px; cursor:default" type="text" class="form-control" placeholder="Folder's Path" aria-label="Folder's Path" aria-describedby="basic-addon2">
+								<input v-model="pictureNewPath" :value="pictureNewPath" style="font-size: 10px; padding:5px" type="text" class="form-control" placeholder="Folder's Path">
 								
 								<div class="input-group-append">
-									<button type="button" class="btn" style="font-size:8px; border:1px solid #C4C4C4; padding:5px; cursor:default">
-										<img style="height:8px" src="./arrow_down.svg" alt="something">
+									<button class="btn" style="font-size:8px; padding:5px">
+										<img style="height:8px" src="./arrow_down.svg" alt="Arrow Down">
 									</button>
 								</div>
 								
 								<div class="input-group-append">
-									<button :disabled="folderPath == pictureNewPath" v-on:click="movePicture()" type="button" class="btn" style="font-size:8px; border:1px solid #C4C4C4; padding:7px 10px; cursor:default">Move</button>
+									<button :disabled="folderPath == pictureNewPath" v-on:click="movePicture()" class="btn" style="font-size:8px; padding:7px 10px">Move</button>
 								</div>
 							</div>
 						</div>
 
 						<div class="clearfix" style="padding:10px 10px 0 10px">
-							<button :disabled="lastMovementPath == null || lastMovementPath == folderPath" v-on:click="movePictureToLastPath()" type="button" class="btn" style="width:100%; font-size:8px; border:1px solid #C4C4C4; padding:7px 10px; cursor:default">Move to same folder as last movement</button>
+							<button :disabled="lastMovementPath == null || lastMovementPath == folderPath" v-on:click="movePictureToLastPath()" class="btn" style="width:100%; font-size:8px; padding:7px 10px">Move to same folder as last movement</button>
 						</div>
 
 						<div class="clearfix" style="padding:10px 10px 0 10px">
 							<div class="input-group">
-								<input id="pictureName" v-model="pictureNewName" :value="pictureNewName" style="font-size: 10px; padding:5px; cursor:default" type="text" class="form-control" placeholder="Picture's Name" aria-label="Picture's Name" aria-describedby="basic-addon2">
+								<input id="pictureName" v-model="pictureNewName" :value="pictureNewName" style="font-size: 10px; padding:5px" type="text" class="form-control" placeholder="Picture's Name">
 								
 								<div class="input-group-append">
-									<span style="font-size:8px; padding:0 5px" class="input-group-text" id="basic-addon1">{{pictureFormat}}</span>
+									<span style="font-size:8px; padding:0 5px" class="input-group-text">{{pictureFormat}}</span>
 								</div>
 								
 								<div class="input-group-append">
-									<button :disabled="pictureName == pictureNewName" v-on:click="renamePicture()" type="button" class="btn" style="font-size:8px; border:1px solid #C4C4C4; padding:7px 10px; cursor:default">Rename</button>
+									<button :disabled="pictureName == pictureNewName" v-on:click="renamePicture()" type="button" class="btn" style="font-size:8px; padding:7px 10px">Rename</button>
 								</div>
 							</div>
 						</div>
 
 						<div class="clearfix" style="padding:10px 10px 0 10px">
 							<div class="clearfix col-xs-3" style="float:left; padding:0" title="Padding">
-								<button :disabled="pictureIndex == 0" v-on:click="previousPicture()" type="button" class="btn" style="font-size:8px; border:1px solid #C4C4C4; padding:7px 10px; cursor:default">
-									<img style="height:8px; padding-right:5px" src="./left_arrow.svg" alt="something"> Prev Picture
+								<button :disabled="pictureIndex == 0" v-on:click="previousPicture()" type="button" class="btn" style="font-size:8px; padding:7px 10px">
+									<img style="height:8px; padding-right:5px" src="./left_arrow.svg" alt="Left Arrow"> Prev Picture
 								</button>
 							</div>
 
 							<div class="clearfix col-xs-3" style="float:right; padding:0" title="Padding">
-								<button :disabled="pictureIndex == pictures[folderIndex].pics.length - 1" v-on:click="nextPicture()" type="button" class="btn" style="font-size:8px; border:1px solid #C4C4C4; padding:7px 10px; cursor:default">
-									Next Picture <img style="height:8px; padding-left:5px" src="./right_arrow.svg" alt="something">
+								<button :disabled="pictureIndex == pictures[folderIndex].pics.length - 1" v-on:click="nextPicture()" type="button" class="btn" style="font-size:8px; padding:7px 10px">
+									Next Picture <img style="height:8px; padding-left:5px" src="./right_arrow.svg" alt="Right Arrow">
 								</button>
 							</div>
 						</div>
 
 						<div class="clearfix" style="padding:10px">
-							<button v-on:click="deletePicture()" type="button" class="btn" style="text-align:center; width:100%; font-size:8px; border:1px solid #C4C4C4; padding:7px 10px; cursor:default"><img style="height:15px; padding-right:5px" src="./trash.svg" alt="something"> Delete Picture</button>
+							<button v-on:click="deletePicture()" type="button" class="btn" style="text-align:center; width:100%; font-size:8px; padding:7px 10px"><img style="height:15px; padding-right:5px" src="./trash.svg" alt="something"> Delete Picture</button>
 						</div>
 					</div>
 
 					<div>
-						<p style="padding: 10px 0 10px 20px; background-color:#EBEBEB; margin:0">GALLERY</p>
-						<div style="background-color: #FFDFC7; overflow-y: scroll; max-height: 53%">
+						<p class="category">GALLERY</p>
+						<div style="background-color: #FFDFC7; overflow-y: scroll; max-height: 65%">
 							<div v-for="(picture, index) in pictures" class="folder">
 								<div class="collapsible" v-on:click="expandFolder(index)">
 									<span style="padding: 5px; font-size: 12px">
 										{{picture.folderPath == "" ? "*Home Folder*": picture.folderPath}}
 									</span>
 									<span style="float:right;">
-										<img style="height:15px; padding-right:5px" src="./arrow_down.svg" alt="something" />
+										<img style="height:15px; padding-right:5px" src="./arrow_down.svg" alt="Down Arrow" />
 									</span>
 								</div>
 
-								<div :id="'folder' + index" v-bind:class="{ 'expandFolder' : index == this.galleryPage.folderIndex}" style="max-height: 160px; overflow-y: scroll" class="content">
+								<div :id="'folder' + index" v-bind:class="{ 'expandFolder' : index == this.galleryPage.folderIndex }" style="max-height: 160px; overflow-y: scroll" class="content">
 									<div class="row">
 										<div v-for="(pic, pictureIndex) in picture.pics" class="col-xs-6 col-md-6" style="padding:10px 5px">
-											<img v-bind:class="{ 'selectedPicture' : (index == this.galleryPage.folderIndex && pictureIndex == this.galleryPage.pictureIndex)}" v-on:click="displayPicture(index, pictureIndex)" class="col-sm-12 img-responsive" v-bind:src="folderPrefix + folderHome + picture.folderPath + pic.pictureName + pic.pictureFormat" style="padding:0; width: auto; max-height:90px; border-radius: 15px; display:inline-block" alt="something">
+											<img v-bind:class="{ 'selectedPicture' : (index == this.galleryPage.folderIndex && pictureIndex == this.galleryPage.pictureIndex) }" v-on:click="displayPicture(index, pictureIndex)" class="col-sm-12 img-responsive" v-bind:src="folderPrefix + folderHome + picture.folderPath + pic.pictureName + pic.pictureFormat" style="padding:0; width: auto; max-height:90px; border-radius: 15px; display:inline-block" alt="Folder's picture">
 										</div>
 									</div>
 								</div>
@@ -113,7 +113,7 @@
 				</div>
 			</div>
 		</div>
-        <div id="snackbar">Some text some message..</div>
+        <div id="snackbar"></div>
 		<script src="./view.js"></script>
 	</body>
 </html>
