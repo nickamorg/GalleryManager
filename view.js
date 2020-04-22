@@ -41,12 +41,13 @@ var snackbar = new Vue({
 var galleryPage = new Vue({
    el: '#galleryPage',
    data: {
-      folderHome: null,
-      folderPrefix: null,
       folderIndex: 0,
       pictureIndex: 0,
+      folderPrefix: null,
+      folderHome: null,
       folderPath: null, 
       pictureName: null,
+      pictureFormat: null,
       pictureNewName: null,
       pictureNewPath: null,
       lastMovementPath: null,
@@ -87,7 +88,7 @@ var galleryPage = new Vue({
                this.deletePicture();
                break;
             case 76: // L - Move to last folder
-            this.movePictureToLastPath();
+               this.movePictureToLastPath();
                break;
             case 77: // M - Move
                this.movePicture();
@@ -122,17 +123,9 @@ var galleryPage = new Vue({
 
       renamePicture() {
          if(!isValidFileName(this.pictureNewName)) return;
-         
-         if (this.pictureNewName.lastIndexOf(".") == -1) {
-            this.pictureNewName = this.pictureNewName + this.pictureName.substring(this.pictureName.lastIndexOf("."));
-         } else if (this.pictureNewName.charAt(this.pictureNewName.length - 1) == '.') {
-            this.pictureNewName += this.pictureName.substring(this.pictureName.lastIndexOf(".") + 1);
-         } else if (this.pictureNewName.substring(this.pictureNewName.lastIndexOf(".")) != this.pictureName.substring(this.pictureName.lastIndexOf("."))) {
-            this.pictureNewName = this.pictureNewName + this.pictureName.substring(this.pictureName.lastIndexOf("."));
-         }
 
-         var from = this.folderPrefix + "/" + this.folderPath + "/" + this.pictureName; 
-         var to = this.folderPrefix + "/" + this.folderPath + "/" + this.pictureNewName; 
+         var from = this.folderPrefix + this.folderHome + this.folderPath + this.pictureName + this.pictureFormat;
+         var to = this.folderPrefix + this.folderHome + this.folderPath + this.pictureNewName + this.pictureFormat;
 
          this.pictureName = this.pictureNewName;
          this.pictures[this.folderIndex].pics[this.pictureIndex].pictureName = this.pictureNewName;
@@ -150,11 +143,11 @@ var galleryPage = new Vue({
          this.pictureNewPath = trimMultipleSlashes(this.pictureNewPath);
 
          if (this.pictureNewPath.slice(-1) == '/') this.pictureNewPath = this.pictureNewPath.slice(0, -1);
+         
          var folders = this.pictureNewPath.split("/");
-
          var currentFolderPath = "";
-         var depth = -1;
          var newFolder = false;
+         var depth = -1;
 
          // Create folder path if not exists
          for (var index in folders) {
@@ -174,9 +167,7 @@ var galleryPage = new Vue({
             }
          }
 
-         if (this.pictureNewPath == "") {
-            depth = 0;
-         }
+         if (this.pictureNewPath == "") depth = 0;
 
          // If the folder path exists, find the right index of Vue data
          if (depth == -1) {
@@ -188,8 +179,8 @@ var galleryPage = new Vue({
             }
          }
          
-         var fromFile = this.folderPrefix + this.folderHome + this.folderPath + this.pictureName;
-         var toFile = this.folderPrefix + this.folderHome + currentFolderPath + "/" + this.pictureName;
+         var fromFile = this.folderPrefix + this.folderHome + this.folderPath + this.pictureName + this.pictureFormat;
+         var toFile = this.folderPrefix + this.folderHome + currentFolderPath + "/" + this.pictureName + this.pictureFormat;
          
          fs.renameSync(fromFile, toFile);
          
@@ -197,10 +188,12 @@ var galleryPage = new Vue({
             Vue.set(this.pictures[depth], "folderPath", currentFolderPath);
             Vue.set(this.pictures[depth].pics, 0, []);
             Vue.set(this.pictures[depth].pics[0], "pictureName", this.pictureName);
+            Vue.set(this.pictures[depth].pics[0], "pictureFormat", this.pictureFormat);
          } else {
             var nextIndex  = this.pictures[depth].pics.length;
             Vue.set(this.pictures[depth].pics, nextIndex, []);
             Vue.set(this.pictures[depth].pics[nextIndex], "pictureName", this.pictureName);
+            Vue.set(this.pictures[depth].pics[nextIndex], "pictureFormat", this.pictureFormat);
          }
 
          this.lastMovementPath = this.pictureNewPath;
@@ -219,16 +212,13 @@ var galleryPage = new Vue({
 
       movePictureToLastPath() {
          if (this.lastMovementPath != null && this.lastMovementPath != this.folderPath) {
-            if (this.lastMovementPath.slice(-1) == '/' || this.lastMovementPath.slice(-1) == '\\') { 
-               this.lastMovementPath = this.lastMovementPath.slice(0, -1);
-            }
             this.pictureNewPath = this.lastMovementPath;
             this.movePicture();
          }
       },
 
       deletePicture() {
-         fs.unlinkSync(this.folderPrefix + "/" + this.folderPath + "/" + this.pictureName);
+         fs.unlinkSync(this.folderPrefix + this.folderHome + this.folderPath + this.pictureName + this.pictureFormat);
 
          if (this.pictureIndex == this.pictures[this.folderIndex].pics.length - 1) {
             this.$delete(this.pictures[this.folderIndex].pics, this.pictureIndex);
@@ -253,6 +243,7 @@ var galleryPage = new Vue({
       setupAfterPictureIndexChanged() {
          this.folderPath = this.pictures[this.folderIndex].folderPath;
          this.pictureNewPath = this.folderPath;
+         this.pictureFormat = this.pictures[this.folderIndex].pics[this.pictureIndex].pictureFormat;
          this.pictureName = this.pictures[this.folderIndex].pics[this.pictureIndex].pictureName;
          this.pictureNewName = this.pictureName;
       },
@@ -285,7 +276,7 @@ $( document ).ready(function() {
          var directoryPath = $("#folder-select-input").val().split("\\").join("/");
          if (directoryPath.slice(-1) == '/') directoryPath = directoryPath.slice(0, -1);
 
-         galleryPage.folderPrefix = directoryPath.substring(0, directoryPath.lastIndexOf("/")) + '/';
+         galleryPage.folderPrefix = directoryPath.substring(0, directoryPath.lastIndexOf("/") + 1);
          galleryPage.folderHome = directoryPath.substring(1 + directoryPath.lastIndexOf("/")) + '/';
          readSelectedFolder("", 0);
       }
@@ -310,12 +301,17 @@ function readSelectedFolder(directoryPath, depth) {
       if (statsObj.isDirectory()) {
          newDepth += readSelectedFolder(directoryPath + file + "/", depth + 1 + newDepth);
       } else if (statsObj.isFile()) {
+         var pictureName = file.substring(0, file.lastIndexOf("."));
+         var pictureFormat = file.substring(file.lastIndexOf("."));
+
          Vue.set(this.galleryPage.pictures[depth].pics, count, []);
-         Vue.set(this.galleryPage.pictures[depth].pics[count], "pictureName", file);
+         Vue.set(this.galleryPage.pictures[depth].pics[count], "pictureName", pictureName);
+         Vue.set(this.galleryPage.pictures[depth].pics[count], "pictureFormat", pictureFormat);
          
          if (this.galleryPage.pictureName == null) {
-            this.galleryPage.pictureName = file;
-            this.galleryPage.pictureNewName = file;
+            this.galleryPage.pictureName = pictureName;
+            this.galleryPage.pictureNewName = pictureName;
+            this.galleryPage.pictureFormat = pictureFormat;
             this.galleryPage.pictureIndex = count;
 
             this.galleryPage.folderPath = directoryPath;
@@ -337,7 +333,7 @@ $("#folder-select").on('change',function() {
    var directoryPath = this.files[0].path;
    directoryPath = directoryPath.split("\\").join("/");
 
-   galleryPage.folderPrefix = directoryPath.substring(0, directoryPath.lastIndexOf("/")) + '/';
+   galleryPage.folderPrefix = directoryPath.substring(0, directoryPath.lastIndexOf("/") + 1);
    galleryPage.folderHome = directoryPath.substring(1 + directoryPath.lastIndexOf("/")) + '/';
    readSelectedFolder("", 0);
 });
