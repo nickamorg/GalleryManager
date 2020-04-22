@@ -248,21 +248,6 @@ var galleryPage = new Vue({
          this.pictureNewName = this.pictureName;
       },
 
-      trimFolderPath(path) {
-         return path;
-         // path = path.split("/").join(" - ");
-
-         // console.log("path " + path);
-         // if (path.split(" - ").length == 1) {
-         //    return path;
-         // } else if (path.split(" - ").length == 2) {
-         //    return path;
-         // }  else if (path.split(" - ").length == 3) {
-         //    return path;
-         // } else {
-         //    return path.split(" - ")[0] + " - ... - " + path.split(" - ")[path.split(" - ").length - 1];
-         // }
-      }
    }
 })
 
