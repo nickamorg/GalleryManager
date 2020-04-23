@@ -41,6 +41,7 @@ var snackbar = new Vue({
 var galleryPage = new Vue({
    el: '#galleryPage',
    data: {
+      expandedFolderIndex: 0,
       showFoldersDropdown: false,
       folderIndex: 0,
       pictureIndex: 0,
@@ -124,6 +125,7 @@ var galleryPage = new Vue({
 
       displayPicture(folderIndex, pictureIndex) {
          this.folderIndex = folderIndex;
+         this.expandedFolderIndex = folderIndex;
          this.pictureIndex = pictureIndex;
 
          this.setupAfterPictureIndexChanged();
@@ -256,6 +258,10 @@ var galleryPage = new Vue({
       },
 
       expandFolder(index) {
+         if (this.pictures[index].pics.length == 0) return;
+
+         this.expandedFolderIndex = this.expandedFolderIndex == index ? -1 : index;
+
          $('#folder' + index).toggle();
 
          for (var i in Object.keys(this.pictures)) {
@@ -325,6 +331,7 @@ function readSelectedFolder(directoryPath, depth) {
             this.galleryPage.folderPath = directoryPath;
             this.galleryPage.pictureNewPath = this.galleryPage.folderPath;
             this.galleryPage.folderIndex = depth;
+            this.galleryPage.expandedFolderIndex = depth;
          }
 
          count++;

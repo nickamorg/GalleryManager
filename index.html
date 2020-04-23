@@ -74,13 +74,13 @@
 						<div class="clearfix" style="padding:10px 10px 0 10px">
 							<div class="clearfix col-xs-3" style="float:left; padding:0" title="Padding">
 								<button :disabled="pictureIndex == 0" @click="previousPicture" type="button" class="btn" style="font-size:8px; padding:7px 10px">
-									<img style="height:8px; padding-right:5px" src="./left_arrow.svg" alt="Left Arrow"> Prev Picture
+									<img style="height:8px; padding-right:5px" src="./icons/arrow_left.svg" alt="Left Arrow"> Prev Picture
 								</button>
 							</div>
 
 							<div class="clearfix col-xs-3" style="float:right; padding:0" title="Padding">
 								<button :disabled="pictureIndex == pictures[folderIndex].pics.length - 1" @click="nextPicture" type="button" class="btn" style="font-size:8px; padding:7px 10px">
-									Next Picture <img style="height:8px; padding-left:5px" src="./right_arrow.svg" alt="Right Arrow">
+									Next Picture <img style="height:8px; padding-left:5px" src="./icons/arrow_right.svg" alt="Right Arrow">
 								</button>
 							</div>
 						</div>
@@ -99,7 +99,7 @@
 										{{picture.folderPath == "" ? "*Home Folder*": picture.folderPath}}
 									</span>
 									<span style="float:right;">
-										<img style="height:15px; padding-right:5px" src="./arrow_down.svg" alt="Down Arrow" />
+										<img style="height:15px; padding-right:5px" :src="index == this.galleryPage.folderIndex || index == this.galleryPage.expandedFolderIndex ? './icons/arrow_up.svg' : './icons/arrow_down.svg'" alt="Down Arrow" />
 									</span>
 								</div>
 
