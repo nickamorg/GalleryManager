@@ -41,6 +41,7 @@ var snackbar = new Vue({
 var galleryPage = new Vue({
    el: '#galleryPage',
    data: {
+      showFoldersDropdown: false,
       folderIndex: 0,
       pictureIndex: 0,
       folderPrefix: null,
@@ -56,6 +57,13 @@ var galleryPage = new Vue({
 
    created: function () {
       window.addEventListener('keydown', this.onkey);
+   },
+
+   computed: {
+      activeFolders: function() {
+         return Object.keys(this.pictures).map(key => { return this.pictures[key]})
+         .filter(pic => { return pic.folderPath != this.folderPath});
+      }
    },
 
    watch: {
@@ -102,15 +110,15 @@ var galleryPage = new Vue({
 
       nextPicture() {
          if (this.pictureIndex < this.pictures[this.folderIndex].pics.length - 1) {
-            this.setupAfterPictureIndexChanged();
             this.pictureIndex++;
+            this.setupAfterPictureIndexChanged();
          }
       },
 
       previousPicture() {
          if (this.pictureIndex > 0) {
-            this.setupAfterPictureIndexChanged();
             this.pictureIndex--;
+            this.setupAfterPictureIndexChanged();
          }
       },
 
@@ -215,6 +223,21 @@ var galleryPage = new Vue({
             this.pictureNewPath = this.lastMovementPath;
             this.movePicture();
          }
+      },
+
+      enterFoldersDropdown() {
+         this.showFoldersDropdown = true;
+      },
+
+      exitFoldersDropdown() {
+         this.showFoldersDropdown = false;
+      },
+
+      moveToDropdownFolder(folderPath) {
+         this.pictureNewPath = folderPath;
+         this.showFoldersDropdown = false;
+
+         this.movePicture();
       },
 
       deletePicture() {

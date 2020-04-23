@@ -126,7 +126,6 @@ button {
 }
   
 .dropdown-content {
-    display: none;
     position: absolute;
     background-color: #f1f1f1;
     right:0px;
@@ -145,7 +144,7 @@ button {
 .dropdown-content a:hover {
     background-color: #FFBA85;
 }
-  
-.dropdown:hover .dropdown-content {
-    display: block;
+
+a {
+    cursor: pointer;
 }
