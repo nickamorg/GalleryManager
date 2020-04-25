@@ -112,6 +112,7 @@ var galleryPage = new Vue({
       nextPicture() {
          if (this.pictureIndex < this.pictures[this.folderIndex].pics.length - 1) {
             this.pictureIndex++;
+            document.getElementById("pic" + this.pictureIndex).scrollIntoView();
             this.setupAfterPictureIndexChanged();
          }
       },
@@ -119,6 +120,7 @@ var galleryPage = new Vue({
       previousPicture() {
          if (this.pictureIndex > 0) {
             this.pictureIndex--;
+            document.getElementById("pic" + this.pictureIndex).scrollIntoView();
             this.setupAfterPictureIndexChanged();
          }
       },

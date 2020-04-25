@@ -25,7 +25,7 @@
 		<div id="galleryPage">
 			<div v-if="pictureName != null" style="display: flex; height:100%">
 				<div class="col-sm-10" style="padding:20px">
-					<img class="col-sm-12 img-responsive" alt="Displayed Picture" v-bind:src="folderPrefix + folderHome + folderPath + pictureName + pictureFormat" style="max-height:600px; border-radius:20px">
+					<img class="col-sm-12 img-responsive pic" alt="Displayed Picture" v-bind:src="folderPrefix + folderHome + folderPath + pictureName + pictureFormat">
 				</div>
 				<div class="col-sm-2" style="text-align:left; padding:0; background-color:#F5F5F5; border-left: 2px solid #000000">
 					<div>
@@ -44,7 +44,7 @@
 
 								<div class="input-group-append dropdown" @mouseleave="exitFoldersDropdown" @mouseover="enterFoldersDropdown">
 									<button class="btn dropbtn" style="font-size:8px; padding:5px">
-										<img style="height:8px; cursor:pointer" src="./arrow_down.svg" alt="Arrow Down">
+										<img style="height:8px; cursor:pointer" src="./icons/arrow_down.svg" alt="Arrow Down">
 									</button>
 									<div class="dropdown-content" v-show="showFoldersDropdown" @mouseleave="exitFoldersDropdown">
 										<a v-for="folder in activeFolders" @click="moveToDropdownFolder(folder.folderPath)">{{folder.folderPath == "" ? "*Home Folder*": folder.folderPath}}</a>
@@ -86,7 +86,7 @@
 						</div>
 
 						<div class="clearfix" style="padding:10px">
-							<button @click="deletePicture" type="button" class="btn" style="text-align:center; width:100%; font-size:8px; padding:7px 10px"><img style="height:15px; padding-right:5px" src="./trash.svg" alt="something"> Delete Picture</button>
+							<button @click="deletePicture" type="button" class="btn" style="text-align:center; width:100%; font-size:8px; padding:7px 10px"><img style="height:15px; padding-right:5px" src="./icons/trash.svg" alt="something"> Delete Picture</button>
 						</div>
 					</div>
 
@@ -98,15 +98,18 @@
 									<span style="padding: 5px; font-size: 12px">
 										{{picture.folderPath == "" ? "*Home Folder*": picture.folderPath}}
 									</span>
-									<span style="float:right;">
-										<img style="height:15px; padding-right:5px" :src="index == this.galleryPage.folderIndex || index == this.galleryPage.expandedFolderIndex ? './icons/arrow_up.svg' : './icons/arrow_down.svg'" alt="Down Arrow" />
+									<span style="float:right">
+										<img style="height:15px" :src="index == this.galleryPage.folderIndex || index == this.galleryPage.expandedFolderIndex ? './icons/arrow_up.svg' : './icons/arrow_down.svg'" alt="Down Arrow" />
+									</span>
+									<span style="float:right; font-size:12px">
+										{{(index == this.galleryPage.folderIndex ? this.galleryPage.pictureIndex + 1 + "/" : "") + picture.pics.length}} pics
 									</span>
 								</div>
 
 								<div :id="'folder' + index" v-bind:class="{ 'expandFolder' : index == this.galleryPage.folderIndex }" style="max-height: 160px; overflow-y: scroll" class="content">
 									<div class="row">
-										<div v-for="(pic, pictureIndex) in picture.pics" class="col-xs-6 col-md-6" style="padding:10px 5px">
-											<img v-bind:class="{ 'selectedPicture' : (index == this.galleryPage.folderIndex && pictureIndex == this.galleryPage.pictureIndex) }" @click="displayPicture(index, pictureIndex)" class="col-sm-12 img-responsive" v-bind:src="folderPrefix + folderHome + picture.folderPath + pic.pictureName + pic.pictureFormat" style="padding:0; width: auto; max-height:90px; border-radius: 15px; display:inline-block" alt="Folder's picture">
+										<div v-for="(pic, pictureIndex) in picture.pics" :id="'pic' + pictureIndex" class="col-xs-6 col-md-6" style="padding:10px 5px">
+											<img v-bind:class="{ 'selectedPicture' : (index == this.galleryPage.folderIndex && pictureIndex == this.galleryPage.pictureIndex) }" @click="displayPicture(index, pictureIndex)" class="col-sm-12 img-responsive pic" v-bind:src="folderPrefix + folderHome + picture.folderPath + pic.pictureName + pic.pictureFormat" style="padding:0; border-radius: 15px; display:inline-block" alt="Folder's picture">
 										</div>
 									</div>
 								</div>
