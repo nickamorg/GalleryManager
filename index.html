@@ -12,7 +12,7 @@
 			<div class="row h-100">
 				<div class="col-sm-12 my-auto">
 					<div class="input-group mb-3" style="padding-left:20%; padding-right:20%">
-						<input value="C:\Users\NickSym\Desktop\TestingFolder" id="folder-select-input" type="text" class="form-control" placeholder="Folder's Path" aria-label="Recipient's username" aria-describedby="basic-addon2" autofocus>
+						<input value="C:\Users\NickSym\Desktop\TestingFolder" id="folder-select-input" type="text" class="form-control" placeholder="folder path" autofocus>
 						<div id="select-folder-button" class="input-group-append">
 							<span class="input-group-text" id="folder-select-button">Select Folder</span>
 						</div>
@@ -23,9 +23,10 @@
 		</div>
 
 		<div id="galleryPage">
-			<div v-if="pictureName != null" style="display:flex; height:100%">
+			<div v-if="fileName != null" style="display:flex; height:100%">
 				<div class="col-sm-10" style="padding:20px">
-					<img class="col-sm-12 img-responsive pic" alt="Displayed Picture" v-bind:src="folderPrefix + folderHome + folderPath + pictureName + pictureFormat">
+					<img v-if="imageFormats.includes(fileFormat.toUpperCase())" class="img-responsive pic" v-bind:src="folderPrefix + folderHome + folderPath + fileName + fileFormat" alt="Displayed File">
+					<video v-else class="col-sm-12" v-bind:src="folderPrefix + folderHome + folderPath + fileName + fileFormat" controls></video>
 				</div>
 				<div class="col-sm-2" style="text-align:left; padding:0; background-color:#F5F5F5; border-left:2px solid #000000">
 					<p class="category">ACTIONS</p>
@@ -35,10 +36,10 @@
 								<span style="font-size:8px; padding:0 5px" class="input-group-text">{{folderHome}}</span>
 							</div>
 							
-							<input v-model="pictureNewPath" :value="pictureNewPath" style="font-size:10px; padding:5px" type="text" class="form-control" placeholder="Folder's Path">
+							<input v-model="fileNewPath" :value="fileNewPath" style="font-size:10px; padding:5px" type="text" class="form-control" placeholder="folder path">
 							
 							<div class="input-group-append">
-								<button :disabled="folderPath == pictureNewPath" @click="movePicture" class="btn" style="font-size:8px; padding:7px 10px">Move</button>
+								<button :disabled="folderPath == fileNewPath" @click="moveFile" class="btn" style="font-size:8px; padding:7px 10px">Move</button>
 							</div>
 
 							<div class="input-group-append dropdown" @mouseleave="exitFoldersDropdown" @mouseover="enterFoldersDropdown">
@@ -53,39 +54,39 @@
 					</div>
 
 					<div class="clearfix" style="padding:10px 10px 0 10px">
-						<button :disabled="lastMovementPath == null || lastMovementPath == folderPath" @click="movePictureToLastPath" class="btn" style="width:100%; font-size:8px; padding:7px 10px">Move to same folder as last movement</button>
+						<button :disabled="lastMovementPath == null || lastMovementPath == folderPath" @click="moveFileToLastPath" class="btn" style="width:100%; font-size:8px; padding:7px 10px">Move to same folder as last movement</button>
 					</div>
 
 					<div class="clearfix" style="padding:10px 10px 0 10px">
 						<div class="input-group">
-							<input id="pictureName" v-model="pictureNewName" :value="pictureNewName" style="font-size:10px; padding:5px" type="text" class="form-control" placeholder="folder's Name">
+							<input id="fileName" v-model="fileNewName" :value="fileNewName" style="font-size:10px; padding:5px" type="text" class="form-control" placeholder="file name">
 							
 							<div class="input-group-append">
-								<span style="font-size:8px; padding:0 5px" class="input-group-text">{{pictureFormat}}</span>
+								<span style="font-size:8px; padding:0 5px" class="input-group-text">{{fileFormat}}</span>
 							</div>
 							
 							<div class="input-group-append">
-								<button :disabled="pictureName == pictureNewName" @click="renamePicture" type="button" class="btn" style="font-size:8px; padding:7px 10px">Rename</button>
+								<button :disabled="fileName == fileNewName" @click="renameFile" type="button" class="btn" style="font-size:8px; padding:7px 10px">Rename</button>
 							</div>
 						</div>
 					</div>
 
 					<div class="clearfix" style="padding:10px 10px 0 10px">
 						<div class="clearfix col-xs-3" style="float:left; padding:0">
-							<button :disabled="pictureIndex == 0" @click="previousPicture" type="button" class="btn" style="font-size:8px; padding:7px 10px">
+							<button :disabled="fileIndex == 0" @click="previousFile" type="button" class="btn" style="font-size:8px; padding:7px 10px">
 								<img style="height:8px; padding-right:5px" src="./icons/arrow_left.svg" alt="Arrow Left Icon"> Prev folder
 							</button>
 						</div>
 
 						<div class="clearfix col-xs-3" style="float:right; padding:0">
-							<button :disabled="pictureIndex == gallery[folderIndex].pics.length - 1" @click="nextPicture" type="button" class="btn" style="font-size:8px; padding:7px 10px">
+							<button :disabled="fileIndex == gallery[folderIndex].pics.length - 1" @click="nextFile" type="button" class="btn" style="font-size:8px; padding:7px 10px">
 								Next folder <img style="height:8px; padding-left:5px" src="./icons/arrow_right.svg" alt="Arrow Right Icon">
 							</button>
 						</div>
 					</div>
 
 					<div class="clearfix" style="padding:10px">
-						<button @click="deletePicture" type="button" class="btn" style="text-align:center; width:100%; font-size:8px; padding:7px 10px"><img style="height:15px; padding-right:5px" src="./icons/trash.svg" alt="Trash icon"> Delete folder</button>
+						<button @click="deleteFile" type="button" class="btn" style="text-align:center; width:100%; font-size:8px; padding:7px 10px"><img style="height:15px; padding-right:5px" src="./icons/trash.svg" alt="Trash icon"> Delete folder</button>
 					</div>
 
 					<p class="category">GALLERY</p>
@@ -99,14 +100,17 @@
 									<img style="height:15px" :src="index == this.galleryPage.folderIndex || index == this.galleryPage.expandedFolderIndex ? './icons/arrow_up.svg' :'./icons/arrow_down.svg'" alt="Arrow Down Icon" />
 								</span>
 								<span style="float:right; font-size:12px">
-									{{(index == this.galleryPage.folderIndex ? this.galleryPage.pictureIndex + 1 + "/" :"") + folder.pics.length}} pics
+									{{(index == this.galleryPage.folderIndex ? this.galleryPage.fileIndex + 1 + "/" :"") + folder.pics.length}} pics
 								</span>
 							</div>
 
 							<div :id="'folder' + index" v-bind:class="{ 'expandFolder' :index == this.galleryPage.folderIndex }" style="max-height:160px; overflow-y:scroll" class="content">
 								<div class="row">
-									<div v-for="(pic, pictureIndex) in folder.pics" :id="'pic' + pictureIndex" class="col-xs-6 col-md-6" style="padding:10px 5px">
-										<img v-bind:class="{ 'selectedPicture' :(index == this.galleryPage.folderIndex && pictureIndex == this.galleryPage.pictureIndex) }" @click="displayPicture(index, pictureIndex)" class="col-sm-12 img-responsive pic" v-bind:src="folderPrefix + folderHome + folder.folderPath + pic.pictureName + pic.pictureFormat" style="padding:0; border-radius:15px; display:inline-block" alt="Folder's folder">
+									<div v-for="(pic, fileIndex) in folder.pics" :id="'pic' + fileIndex" class="col-xs-6 col-md-6" style="padding:10px 5px">
+										<img v-if="imageFormats.includes(pic.fileFormat.toUpperCase())" v-bind:class="{ 'selectedFile' :(index == this.galleryPage.folderIndex && fileIndex == this.galleryPage.fileIndex) }" @click="displayFile(index, fileIndex)" class="col-sm-12 img-responsive pic" v-bind:src="folderPrefix + folderHome + folder.folderPath + pic.fileName + pic.fileFormat" style="padding:0; border-radius:15px; display:inline-block" alt="File">
+										<video v-if="videoFormats.includes(pic.fileFormat.toUpperCase())" v-bind:class="{ 'selectedFile' :(index == this.galleryPage.folderIndex && fileIndex == this.galleryPage.fileIndex) }" @click="displayFile(index, fileIndex)" class="col-sm-12 img-responsive pic" style="padding:0; border-radius:15px; display:inline-block">
+											<source v-bind:src="folderPrefix + folderHome + folder.folderPath + pic.fileName + pic.fileFormat">
+										</video>
 									</div>
 								</div>
 							</div>

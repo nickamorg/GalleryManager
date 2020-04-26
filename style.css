@@ -94,7 +94,7 @@ body, img {
     user-select: none;
 }
 
-.selectedPicture {
+.selectedFile {
     border: 3px solid #FFBA85;
 }
 
