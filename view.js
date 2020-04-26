@@ -3,6 +3,7 @@ let fs = require('fs')
 
 var INVALID_FILE_CHARS_REGEX = '^[^\\\\*/:"?|<>]*$';
 var INVALID_FOLDER_CHARS_REGEX = '^[^*:"?|<>]*$';
+var imageFormats = [".PNG", ".JPG", "JPEG", ".GIF"];
 
 function isValidFileName(fileName) {
    if(!fileName.match(INVALID_FILE_CHARS_REGEX)) {
@@ -196,17 +197,14 @@ var galleryPage = new Vue({
          
          fs.renameSync(fromFile, toFile);
          
+         var nextIndex  = this.gallery[depth].pics.length;
          if (newFolder) {
+            nextIndex  = 0;
             Vue.set(this.gallery[depth], "folderPath", currentFolderPath);
-            Vue.set(this.gallery[depth].pics, 0, []);
-            Vue.set(this.gallery[depth].pics[0], "pictureName", this.pictureName);
-            Vue.set(this.gallery[depth].pics[0], "pictureFormat", this.pictureFormat);
-         } else {
-            var nextIndex  = this.gallery[depth].pics.length;
-            Vue.set(this.gallery[depth].pics, nextIndex, []);
-            Vue.set(this.gallery[depth].pics[nextIndex], "pictureName", this.pictureName);
-            Vue.set(this.gallery[depth].pics[nextIndex], "pictureFormat", this.pictureFormat);
          }
+         Vue.set(this.gallery[depth].pics, nextIndex, []);
+         Vue.set(this.gallery[depth].pics[nextIndex], "pictureName", this.pictureName);
+         Vue.set(this.gallery[depth].pics[nextIndex], "pictureFormat", this.pictureFormat);
 
          this.lastMovementPath = this.pictureNewPath;
          
@@ -319,6 +317,8 @@ function readSelectedFolder(directoryPath, depth) {
       } else if (statsObj.isFile()) {
          var pictureName = file.substring(0, file.lastIndexOf("."));
          var pictureFormat = file.substring(file.lastIndexOf("."));
+
+         if (!imageFormats.includes(pictureFormat.toUpperCase())) return;
 
          Vue.set(this.galleryPage.gallery[depth].pics, count, []);
          Vue.set(this.galleryPage.gallery[depth].pics[count], "pictureName", pictureName);

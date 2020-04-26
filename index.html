@@ -25,9 +25,9 @@
 		<div id="galleryPage">
 			<div v-if="pictureName != null" style="display:flex; height:100%">
 				<div class="col-sm-10" style="padding:20px">
-					<img class="col-sm-12 img-responsive pic" alt="Displayed folder" v-bind:src="folderPrefix + folderHome + folderPath + pictureName + pictureFormat">
+					<img class="col-sm-12 img-responsive pic" alt="Displayed Picture" v-bind:src="folderPrefix + folderHome + folderPath + pictureName + pictureFormat">
 				</div>
-				<div class="col-sm-2" style="text-align:left; padding:0; background-color:#F5F5F5; border-left:2px solid #000000; overflow-y:scroll">
+				<div class="col-sm-2" style="text-align:left; padding:0; background-color:#F5F5F5; border-left:2px solid #000000">
 					<p class="category">ACTIONS</p>
 					<div class="clearfix" style="padding:10px 10px 0 10px">
 						<div class="input-group">
@@ -71,13 +71,13 @@
 					</div>
 
 					<div class="clearfix" style="padding:10px 10px 0 10px">
-						<div class="clearfix col-xs-3" style="float:left; padding:0" title="Padding">
+						<div class="clearfix col-xs-3" style="float:left; padding:0">
 							<button :disabled="pictureIndex == 0" @click="previousPicture" type="button" class="btn" style="font-size:8px; padding:7px 10px">
 								<img style="height:8px; padding-right:5px" src="./icons/arrow_left.svg" alt="Arrow Left Icon"> Prev folder
 							</button>
 						</div>
 
-						<div class="clearfix col-xs-3" style="float:right; padding:0" title="Padding">
+						<div class="clearfix col-xs-3" style="float:right; padding:0">
 							<button :disabled="pictureIndex == gallery[folderIndex].pics.length - 1" @click="nextPicture" type="button" class="btn" style="font-size:8px; padding:7px 10px">
 								Next folder <img style="height:8px; padding-left:5px" src="./icons/arrow_right.svg" alt="Arrow Right Icon">
 							</button>
@@ -89,7 +89,7 @@
 					</div>
 
 					<p class="category">GALLERY</p>
-					<div style="background-color:#FFDFC7; overflow-y:scroll; max-height:65%">
+					<div style="background-color:#FFDFC7; overflow-y:scroll; max-height:61%">
 						<div v-for="(folder, index) in gallery" class="folder">
 							<div class="collapsible" @click="expandFolder(index)">
 								<span style="padding:5px; font-size:12px">
