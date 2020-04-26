@@ -5,6 +5,7 @@ var INVALID_FILE_CHARS_REGEX = '^[^\\\\*/:"?|<>]*$';
 var INVALID_FOLDER_CHARS_REGEX = '^[^*:"?|<>]*$';
 var imageFormats = [".PNG", ".JPG", ".JPEG", ".GIF"];
 var videoFormats = [".MP4", ".MOV", ".MKV"];
+var audioFormats = [".MP3", ".WAV"];
 
 function isValidFileName(fileName) {
    if (!fileName.match(INVALID_FILE_CHARS_REGEX)) {
@@ -22,6 +23,18 @@ function isValidFolderName(fileName) {
    }
 
    return true;
+}
+
+function playMedia() {
+   var mediaId = "#displayedAudio";
+
+   if (videoFormats.includes(this.galleryPage.fileFormat.toUpperCase())) mediaId = "#displayedVideo";
+
+   if ($(mediaId)[0].paused) {
+      $(mediaId)[0].play();
+   } else {
+      $(mediaId)[0].pause();
+   }
 }
 
 function trimMultipleSlashes(str) {
@@ -80,17 +93,20 @@ var galleryPage = new Vue({
          if ($("input").is(":focus")) return;
 
          switch(event.which) {
-            case 37: // left
+            case 32: // Enter
+               playMedia();
+               break;
+            case 37: // Left
                this.previousFile();
                break;
-            case 38: // up
+            case 38: // Up
                this.previousFile();
                this.previousFile();
                break;
-            case 39: // right
+            case 39: // Right
                this.nextFile();
                break;
-            case 40: // down
+            case 40: // Down
                this.nextFile();
                this.nextFile();
                break;
@@ -319,7 +335,9 @@ function readSelectedFolder(directoryPath, depth) {
          var fileName = file.substring(0, file.lastIndexOf("."));
          var fileFormat = file.substring(file.lastIndexOf("."));
 
-         if (!imageFormats.includes(fileFormat.toUpperCase()) && !videoFormats.includes(fileFormat.toUpperCase())) return;
+         if (!imageFormats.includes(fileFormat.toUpperCase())
+          && !videoFormats.includes(fileFormat.toUpperCase())
+          && !audioFormats.includes(fileFormat.toUpperCase())) return;
 
          Vue.set(this.galleryPage.gallery[depth].pics, count, []);
          Vue.set(this.galleryPage.gallery[depth].pics[count], "fileName", fileName);
