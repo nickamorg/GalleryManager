@@ -6,6 +6,7 @@ var INVALID_FOLDER_CHARS_REGEX = '^[^*:"?|<>]*$';
 var imageFormats = [".PNG", ".JPG", ".JPEG", ".GIF"];
 var videoFormats = [".MP4", ".MOV", ".MKV"];
 var audioFormats = [".MP3", ".WAV"];
+var fileFormats = imageFormats.concat(videoFormats).concat(audioFormats);
 
 function isValidFileName(fileName) {
    if (!fileName.match(INVALID_FILE_CHARS_REGEX)) {
@@ -30,11 +31,7 @@ function playMedia() {
 
    if (videoFormats.includes(this.galleryPage.fileFormat.toUpperCase())) mediaId = "#displayedVideo";
 
-   if ($(mediaId)[0].paused) {
-      $(mediaId)[0].play();
-   } else {
-      $(mediaId)[0].pause();
-   }
+   $(mediaId)[0].paused ? $(mediaId)[0].play() : $(mediaId)[0].pause();
 }
 
 function trimMultipleSlashes(str) {
@@ -68,7 +65,7 @@ var galleryPage = new Vue({
       fileNewName: null,
       fileNewPath: null,
       lastMovementPath: null,
-      gallery:  {}
+      gallery: {}
    },
 
    created: function () {
@@ -78,14 +75,8 @@ var galleryPage = new Vue({
    computed: {
       activeFolders: function() {
          return Object.keys(this.gallery).map(key => { return this.gallery[key]})
-         .filter(pic => { return pic.folderPath != this.folderPath});
+         .filter(file => { return file.folderPath != this.folderPath});
       }
-   },
-
-   watch: {
-      'fileNewName': function(val) { },
-
-      'fileNewPath': function(val) { }
    },
 
    methods: {
@@ -128,9 +119,9 @@ var galleryPage = new Vue({
       },
 
       nextFile() {
-         if (this.fileIndex < this.gallery[this.folderIndex].pics.length - 1) {
+         if (this.fileIndex < this.gallery[this.folderIndex].files.length - 1) {
             this.fileIndex++;
-            document.getElementById("pic" + this.fileIndex).scrollIntoView();
+            document.getElementById("file" + this.fileIndex).scrollIntoView();
             this.setupAfterFileIndexChanged();
          }
       },
@@ -138,7 +129,7 @@ var galleryPage = new Vue({
       previousFile() {
          if (this.fileIndex > 0) {
             this.fileIndex--;
-            document.getElementById("pic" + this.fileIndex).scrollIntoView();
+            document.getElementById("file" + this.fileIndex).scrollIntoView();
             this.setupAfterFileIndexChanged();
          }
       },
@@ -158,7 +149,7 @@ var galleryPage = new Vue({
          var to = this.folderPrefix + this.folderHome + this.folderPath + this.fileNewName + this.fileFormat;
 
          this.fileName = this.fileNewName;
-         this.gallery[this.folderIndex].pics[this.fileIndex].fileName = this.fileNewName;
+         this.gallery[this.folderIndex].files[this.fileIndex].fileName = this.fileNewName;
 
          fs.renameSync(from, to);
 
@@ -190,7 +181,7 @@ var galleryPage = new Vue({
                
                Vue.set(this.gallery, depth, {
                   "folderPath" : currentFolderPath,
-                  "pics" : []
+                  "files" : []
                });
 
                newFolder = true;
@@ -214,24 +205,26 @@ var galleryPage = new Vue({
          
          fs.renameSync(fromFile, toFile);
          
-         var nextIndex  = this.gallery[depth].pics.length;
+         var nextIndex = this.gallery[depth].files.length;
+         
          if (newFolder) {
-            nextIndex  = 0;
+            nextIndex = 0;
             Vue.set(this.gallery[depth], "folderPath", currentFolderPath);
          }
-         Vue.set(this.gallery[depth].pics, nextIndex, []);
-         Vue.set(this.gallery[depth].pics[nextIndex], "fileName", this.fileName);
-         Vue.set(this.gallery[depth].pics[nextIndex], "fileFormat", this.fileFormat);
+
+         Vue.set(this.gallery[depth].files, nextIndex, []);
+         Vue.set(this.gallery[depth].files[nextIndex], "fileName", this.fileName);
+         Vue.set(this.gallery[depth].files[nextIndex], "fileFormat", this.fileFormat);
 
          this.lastMovementPath = this.fileNewPath;
          
          snackbar.expandSnackbar(3, "File Moved to '" + this.folderHome + this.fileNewPath + "' Successfully");
 
-         if (this.fileIndex == this.gallery[this.folderIndex].pics.length - 1) {
-            this.$delete(this.gallery[this.folderIndex].pics, this.fileIndex);
+         if (this.fileIndex == this.gallery[this.folderIndex].files.length - 1) {
+            this.$delete(this.gallery[this.folderIndex].files, this.fileIndex);
             this.fileIndex--;
          } else {
-            this.$delete(this.gallery[this.folderIndex].pics, this.fileIndex);
+            this.$delete(this.gallery[this.folderIndex].files, this.fileIndex);
          }
 
          this.setupAfterFileIndexChanged();
@@ -262,11 +255,11 @@ var galleryPage = new Vue({
       deleteFile() {
          fs.unlinkSync(this.folderPrefix + this.folderHome + this.folderPath + this.fileName + this.fileFormat);
 
-         if (this.fileIndex == this.gallery[this.folderIndex].pics.length - 1) {
-            this.$delete(this.gallery[this.folderIndex].pics, this.fileIndex);
+         if (this.fileIndex == this.gallery[this.folderIndex].files.length - 1) {
+            this.$delete(this.gallery[this.folderIndex].files, this.fileIndex);
             this.fileIndex--;
          } else {
-            this.$delete(this.gallery[this.folderIndex].pics, this.fileIndex);
+            this.$delete(this.gallery[this.folderIndex].files, this.fileIndex);
          }
 
          this.setupAfterFileIndexChanged();
@@ -275,7 +268,7 @@ var galleryPage = new Vue({
       },
 
       expandFolder(index) {
-         if (this.gallery[index].pics.length == 0) return;
+         if (this.gallery[index].files.length == 0) return;
 
          this.expandedFolderIndex = this.expandedFolderIndex == index ? -1 : index;
 
@@ -289,8 +282,8 @@ var galleryPage = new Vue({
       setupAfterFileIndexChanged() {
          this.folderPath = this.gallery[this.folderIndex].folderPath;
          this.fileNewPath = this.folderPath;
-         this.fileFormat = this.gallery[this.folderIndex].pics[this.fileIndex].fileFormat;
-         this.fileName = this.gallery[this.folderIndex].pics[this.fileIndex].fileName;
+         this.fileFormat = this.gallery[this.folderIndex].files[this.fileIndex].fileFormat;
+         this.fileName = this.gallery[this.folderIndex].files[this.fileIndex].fileName;
          this.fileNewName = this.fileName;
       },
 
@@ -302,32 +295,53 @@ $( document ).ready(function() {
       if ($("#folder-select-input").val() === "") {
          $("#folder-select").trigger('click');
       } else {
-         $("#folder-select-page").hide();
-         $("#gallery-page").show();
          var directoryPath = $("#folder-select-input").val().split("\\").join("/");
          if (directoryPath.slice(-1) == '/') directoryPath = directoryPath.slice(0, -1);
 
          galleryPage.folderPrefix = directoryPath.substring(0, directoryPath.lastIndexOf("/") + 1);
          galleryPage.folderHome = directoryPath.substring(1 + directoryPath.lastIndexOf("/")) + '/';
-         readSelectedFolder("", 0);
+         prepareGalleryObject();
       }
+
+      $("#folder-select-page").hide();
+      $("#gallery-page").show();
    });
 });
+
+function prepareGalleryObject() {
+   readSelectedFolder("", 0);
+
+   for (var index in this.galleryPage.gallery) {
+      var folder = this.galleryPage.gallery[index];
+
+      if (folder.files.length > 0) {
+         this.galleryPage.fileName = folder.files[0].fileName;
+         this.galleryPage.fileNewName = folder.files[0].fileName;
+         this.galleryPage.fileFormat = folder.files[0].fileFormat;
+         this.galleryPage.fileIndex = 0;
+   
+         this.galleryPage.folderPath = folder.folderPath;
+         this.galleryPage.fileNewPath = folder.folderPath;
+         this.galleryPage.folderIndex = index;
+         this.galleryPage.expandedFolderIndex = index;
+
+         return;
+      }
+   }
+
+}
 
 function readSelectedFolder(directoryPath, depth) {
    Vue.set(this.galleryPage.gallery, depth, {
       "folderPath" : directoryPath,
-      "pics" : []
+      "files" : []
    });
 
    var count = 0;
    var newDepth = 0;
-   var filenames = fs.readdirSync(galleryPage.folderPrefix + galleryPage.folderHome + directoryPath)
 
-   filenames.forEach(file => {
-      var filePath = galleryPage.folderPrefix + galleryPage.folderHome + directoryPath + "/" + file;
-
-      var statsObj = fs.statSync(filePath);
+   fs.readdirSync(galleryPage.folderPrefix + galleryPage.folderHome + directoryPath).forEach(file => {
+      var statsObj = fs.statSync(galleryPage.folderPrefix + galleryPage.folderHome + directoryPath + "/" + file);
          
       if (statsObj.isDirectory()) {
          newDepth += readSelectedFolder(directoryPath + file + "/", depth + 1 + newDepth);
@@ -335,53 +349,24 @@ function readSelectedFolder(directoryPath, depth) {
          var fileName = file.substring(0, file.lastIndexOf("."));
          var fileFormat = file.substring(file.lastIndexOf("."));
 
-         if (!imageFormats.includes(fileFormat.toUpperCase())
-          && !videoFormats.includes(fileFormat.toUpperCase())
-          && !audioFormats.includes(fileFormat.toUpperCase())) return;
+         if (!fileFormats.includes(fileFormat.toUpperCase())) return;
 
-         Vue.set(this.galleryPage.gallery[depth].pics, count, []);
-         Vue.set(this.galleryPage.gallery[depth].pics[count], "fileName", fileName);
-         Vue.set(this.galleryPage.gallery[depth].pics[count], "fileFormat", fileFormat);
-         
-         if (this.galleryPage.fileName == null) {
-            this.galleryPage.fileName = fileName;
-            this.galleryPage.fileNewName = fileName;
-            this.galleryPage.fileFormat = fileFormat;
-            this.galleryPage.fileIndex = count;
-
-            this.galleryPage.folderPath = directoryPath;
-            this.galleryPage.fileNewPath = this.galleryPage.folderPath;
-            this.galleryPage.folderIndex = depth;
-            this.galleryPage.expandedFolderIndex = depth;
-         }
-
+         Vue.set(this.galleryPage.gallery[depth].files, count, []);
+         Vue.set(this.galleryPage.gallery[depth].files[count], "fileName", fileName);
+         Vue.set(this.galleryPage.gallery[depth].files[count], "fileFormat", fileFormat);
+      
          count++;
       }
    })
-
-   if (depth == 0 && this.galleryPage.gallery[0].pics.length > 0) {
-      this.galleryPage.fileName = this.galleryPage.gallery[0].pics[0].fileName;
-      this.galleryPage.fileNewName = this.galleryPage.gallery[0].pics[0].fileName;
-      this.galleryPage.fileFormat = this.galleryPage.gallery[0].pics[0].fileFormat;
-      this.galleryPage.fileIndex = 0;
-
-      this.galleryPage.folderPath = this.galleryPage.gallery[0].folderPath;
-      this.galleryPage.fileNewPath = this.galleryPage.gallery[0].folderPath;
-      this.galleryPage.folderIndex = 0;
-      this.galleryPage.expandedFolderIndex = 0;
-   }
 
    return 1 + newDepth;
 }
 
 $("#folder-select").on('change',function() {
-   $("#folder-select-page").hide();
-   $("#gallery-page").show();
-
    var directoryPath = this.files[0].path;
    directoryPath = directoryPath.split("\\").join("/");
 
    galleryPage.folderPrefix = directoryPath.substring(0, directoryPath.lastIndexOf("/") + 1);
    galleryPage.folderHome = directoryPath.substring(1 + directoryPath.lastIndexOf("/")) + '/';
-   readSelectedFolder("", 0);
+   prepareGalleryObject();
 });

@@ -26,10 +26,10 @@
 			<div v-if="fileName != null" style="display:flex; height:100%">
 				<div class="col-sm-10" style="padding:20px">
 					<img v-if="imageFormats.includes(fileFormat.toUpperCase())" class="img-responsive pic" v-bind:src="folderPrefix + folderHome + folderPath + fileName + fileFormat" alt="Displayed File">
-					<video id="displayedVideo" v-else-if="videoFormats.includes(fileFormat.toUpperCase())" class="col-sm-12" v-bind:src="folderPrefix + folderHome + folderPath + fileName + fileFormat" controls></video>
+					<video id="displayedVideo" v-else-if="videoFormats.includes(fileFormat.toUpperCase())" class="col-sm-12" v-bind:src="folderPrefix + folderHome + folderPath + fileName + fileFormat" controls autoplay></video>
 					<img v-if="audioFormats.includes(fileFormat.toUpperCase())" class="col-sm-12 img-responsive pic" src="./icons/song_icon.png" style="height:80%; padding: 5% 0 10% 0" alt="Displayed Audio Icon">
 					<p v-if="audioFormats.includes(fileFormat.toUpperCase())" style="all:none; color:#FFBA85">{{fileName}}</p>
-					<audio id="displayedAudio" v-if="audioFormats.includes(fileFormat.toUpperCase())" class="col-sm-12" v-bind:src="folderPrefix + folderHome + folderPath + fileName + fileFormat" controls></audio>
+					<audio id="displayedAudio" v-if="audioFormats.includes(fileFormat.toUpperCase())" class="col-sm-12" v-bind:src="folderPrefix + folderHome + folderPath + fileName + fileFormat" controls autoplay></audio>
 				</div>
 				<div class="col-sm-2" style="text-align:left; padding:0; background-color:#F5F5F5; border-left:2px solid #000000">
 					<p class="category">ACTIONS</p>
@@ -39,7 +39,7 @@
 								<span style="font-size:8px; padding:0 5px" class="input-group-text">{{folderHome}}</span>
 							</div>
 							
-							<input v-model="fileNewPath" :value="fileNewPath" style="font-size:10px; padding:5px" type="text" class="form-control" placeholder="folder path">
+							<input v-model="fileNewPath" :value="fileNewPath" style="font-size:10px; padding:5px" type="text" class="form-control">
 							
 							<div class="input-group-append">
 								<button :disabled="folderPath == fileNewPath" @click="moveFile" class="btn" style="font-size:8px; padding:7px 10px">Move</button>
@@ -62,14 +62,14 @@
 
 					<div class="clearfix" style="padding:10px 10px 0 10px">
 						<div class="input-group">
-							<input id="fileName" v-model="fileNewName" :value="fileNewName" style="font-size:10px; padding:5px" type="text" class="form-control" placeholder="file name">
+							<input id="fileName" v-model="fileNewName" :value="fileNewName" style="font-size:10px; padding:5px" type="text" class="form-control" :placeholder="fileName">
 							
 							<div class="input-group-append">
 								<span style="font-size:8px; padding:0 5px" class="input-group-text">{{fileFormat}}</span>
 							</div>
 							
 							<div class="input-group-append">
-								<button :disabled="fileName == fileNewName" @click="renameFile" type="button" class="btn" style="font-size:8px; padding:7px 10px">Rename</button>
+								<button :disabled="fileNewName == '' || fileNewName == fileName" @click="renameFile" type="button" class="btn" style="font-size:8px; padding:7px 10px">Rename</button>
 							</div>
 						</div>
 					</div>
@@ -82,7 +82,7 @@
 						</div>
 
 						<div class="clearfix col-xs-3" style="float:right; padding:0">
-							<button :disabled="fileIndex == gallery[folderIndex].pics.length - 1" @click="nextFile" type="button" class="btn" style="font-size:8px; padding:7px 10px">
+							<button :disabled="fileIndex == gallery[folderIndex].files.length - 1" @click="nextFile" type="button" class="btn" style="font-size:8px; padding:7px 10px">
 								Next file <img style="height:8px; padding-left:5px" src="./icons/arrow_right.svg" alt="Arrow Right Icon">
 							</button>
 						</div>
@@ -103,20 +103,20 @@
 									<img style="height:15px" :src="index == this.galleryPage.folderIndex || index == this.galleryPage.expandedFolderIndex ? './icons/arrow_up.svg' :'./icons/arrow_down.svg'" alt="Arrow Down Icon" />
 								</span>
 								<span style="float:right; font-size:12px">
-									{{(index == this.galleryPage.folderIndex ? this.galleryPage.fileIndex + 1 + "/" :"") + folder.pics.length}} files
+									{{(index == this.galleryPage.folderIndex ? this.galleryPage.fileIndex + 1 + "/" :"") + folder.files.length}} files
 								</span>
 							</div>
 
 							<div :id="'folder' + index" v-bind:class="{ 'expandFolder' :index == this.galleryPage.folderIndex }" style="max-height:160px; overflow-y:scroll" class="content">
 								<div class="row">
-									<div v-for="(pic, fileIndex) in folder.pics" :id="'pic' + fileIndex" class="col-xs-6 col-md-6" style="padding:10px 5px">
-										<img v-if="imageFormats.includes(pic.fileFormat.toUpperCase())" v-bind:class="{ 'selectedFile' :(index == this.galleryPage.folderIndex && fileIndex == this.galleryPage.fileIndex) }" @click="displayFile(index, fileIndex)" class="col-sm-12 img-responsive pic" v-bind:src="folderPrefix + folderHome + folder.folderPath + pic.fileName + pic.fileFormat" style="padding:0; border-radius:15px; display:inline-block" alt="File">
-										<video v-else-if="videoFormats.includes(pic.fileFormat.toUpperCase())" v-bind:class="{ 'selectedFile' :(index == this.galleryPage.folderIndex && fileIndex == this.galleryPage.fileIndex) }" @click="displayFile(index, fileIndex)" class="col-sm-12 img-responsive pic" style="padding:0; border-radius:15px; display:inline-block">
-											<source v-bind:src="folderPrefix + folderHome + folder.folderPath + pic.fileName + pic.fileFormat">
+									<div v-for="(file, fileIndex) in folder.files" :id="'file' + fileIndex" class="col-xs-6 col-md-6" style="padding:10px 5px">
+										<img v-if="imageFormats.includes(file.fileFormat.toUpperCase())" v-bind:class="{ 'selectedFile' :(index == this.galleryPage.folderIndex && fileIndex == this.galleryPage.fileIndex) }" @click="displayFile(index, fileIndex)" class="col-sm-12 img-responsive pic" v-bind:src="folderPrefix + folderHome + folder.folderPath + file.fileName + file.fileFormat" style="padding:0; border-radius:15px; display:inline-block" alt="File">
+										<video v-else-if="videoFormats.includes(file.fileFormat.toUpperCase())" v-bind:class="{ 'selectedFile' :(index == this.galleryPage.folderIndex && fileIndex == this.galleryPage.fileIndex) }" @click="displayFile(index, fileIndex)" class="col-sm-12 img-responsive pic" style="padding:0; border-radius:15px; display:inline-block">
+											<source v-bind:src="folderPrefix + folderHome + folder.folderPath + file.fileName + file.fileFormat">
 										</video>
 										<div v-else>
 											<img v-bind:class="{ 'selectedFile' :(index == this.galleryPage.folderIndex && fileIndex == this.galleryPage.fileIndex) }" @click="displayFile(index, fileIndex)" class="col-sm-12 img-responsive pic" src="./icons/song_icon.png" style="padding:0; border-radius:15px; display:inline-block" alt="File">
-											<p style="font-size:12px; white-space:nowrap; overflow-y:hidden">{{pic.fileName}}</p>
+											<p style="font-size:12px; white-space:nowrap; overflow-y:hidden">{{file.fileName}}</p>
 										</div>
 									</div>
 								</div>
